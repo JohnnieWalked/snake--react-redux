@@ -1,0 +1,39 @@
+.game {
+  width: 500px;
+  font-size: 20px;
+  &_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &_field {
+    margin-top: 5px;
+    &_bg {
+      height: 400px;
+      background: url('../assets/Underground_hallow_background_1.png');
+      filter: brightness(.5);
+      border-radius: 10px;
+      box-shadow: 0px 0px 14px 7px rgb(114, 112, 244, 50%);
+      border: 3px solid rgb(114, 112, 244);
+    }
+  }
+  
+}
+
+button {
+  margin-bottom: 10px;
+  background-color: #4e2a1d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+  text-align: center;
+  text-shadow: 0px 1px 0px #3d2015;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    background-color: #603312;
+    box-shadow: 0px 2px 0px #b58944;
+  }
+}
