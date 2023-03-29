@@ -1,5 +1,5 @@
 .game {
-  width: 500px;
+  width: 600px;
   font-size: 20px;
   &_header {
     display: flex;
@@ -7,14 +7,22 @@
     align-items: center;
   }
   &_field {
+    position: relative;
+    height: 400px;
+    width: 100%;
     margin-top: 5px;
-    &_bg {
-      height: 400px;
+    &::before {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 100%;
       background: url('../assets/Underground_hallow_background_1.png');
-      filter: brightness(.5);
-      border-radius: 10px;
-      box-shadow: 0px 0px 14px 7px rgb(114, 112, 244, 50%);
-      border: 3px solid rgb(114, 112, 244);
+      filter: brightness(.4);
+      z-index: -1;
+    }
+    canvas {
+      max-height: 100% !important;
+      max-width: 100% !important;
     }
   }
   

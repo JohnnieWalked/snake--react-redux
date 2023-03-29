@@ -4,8 +4,16 @@ import guidepng  from './assets/Map_Icon_Guide.png';
 import classes from './styles/style.module.scss';
 
 function App() {
+
+
+
+
+
+  
   return (
+    
     <div className={classes.container}>
+      SITE IN THE DEVELOPING...
       <section className={classes.game}>
         <div className={classes.gameHeader}>
           <div>Score: 0</div>
