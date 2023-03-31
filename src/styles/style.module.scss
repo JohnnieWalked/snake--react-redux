@@ -36,17 +36,18 @@
 }
 
 .container {
-  width: 1200px;
+  width: 1100px;
   height: 100vh;
   margin: 0 auto;
   padding: 20px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 body {
-  margin: 0;
-  background: url('../assets/terraria-bg2.jpg') center center/cover no-repeat;
+  margin: 0 auto;
+  background: url('../assets/Background\ Hell\ Improved.png') center center/cover no-repeat;
 }
 
 

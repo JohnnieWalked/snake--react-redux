@@ -10,19 +10,27 @@
     position: relative;
     height: 400px;
     width: 100%;
+    border-radius: 15px;
+    border: 3px solid #ac4308;
+    -webkit-box-shadow: 0px 8px 27px 8px rgb(207, 48, 12, 90%);
+    -moz-box-shadow: 0px 8px 27px 8px rgb(207, 48, 12, 90%);
+    box-shadow: 0px 8px 27px 8px rgb(207, 48, 12, 90%);
     margin-top: 5px;
     &::before {
       content: '';
       position: absolute;
       height: 100%;
       width: 100%;
-      background: url('../assets/Underground_hallow_background_1.png');
+      background: url('../assets/Lava_layer_background_2.png');
       filter: brightness(.4);
       z-index: -1;
     }
     canvas {
       max-height: 100% !important;
       max-width: 100% !important;
+      &:focus {
+        outline: none;
+      }
     }
   }
   

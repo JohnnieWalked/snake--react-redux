@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { snakePosSlice } from "./snakeSlice";
+import { snakeSlice } from "./snakeSlice";
+import { appleSlice } from "./appleSlice";
 import { speedSlice } from "./speedSlice";
 
 const store = configureStore({
   reducer: {
-    snakePos: snakePosSlice.reducer,
-    direction: snakePosSlice.reducer,
+    snakePos: snakeSlice.reducer,
+    direction: snakeSlice.reducer,
+    applePos: appleSlice.reducer,
     speed: speedSlice.reducer,
   }
 });

@@ -13,7 +13,6 @@ function App() {
   return (
     
     <div className={classes.container}>
-      SITE IN THE DEVELOPING...
       <section className={classes.game}>
         <div className={classes.gameHeader}>
           <div>Score: 0</div>
