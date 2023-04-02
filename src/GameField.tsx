@@ -1,62 +1,38 @@
-import { KeyboardEvent, useEffect, useRef } from 'react';
+import { KeyboardEvent, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useInterval from './hooks/useInterval';
 
-import { CANVAS_SIZE, SCALE } from './constants';
-
+/* import redux-slices */
 import { RootState } from './store';
 import { snakePosActions } from './store/snakeSlice';
 import { appleActions } from './store/appleSlice';
 import { speedActions } from './store/speedSlice';
 
-import snakeHeadUp from './assets/Bone_HeadUp.png';
-import snakeHeadRight from './assets/Bone_HeadRight.png';
-import snakeHeadDown from './assets/Bone_HeadDown.png';
-import snakeHeadLeft from './assets/Bone_HeadLeft.png';
+/* import img files */
+import { 
+  CANVAS_SIZE, SCALE,
+  snakeHeadUpImgPath, snakeHeadRightImgPath, snakeHeadDownImgPath, snakeHeadLeftImgPath,
+  snakeBodyUpImgPath, snakeBodyRightImgPath, snakeBodyDownImgPath, snakeBodyLeftImgPath,
+  snakeTailUpImgPath, snakeTailRightImgPath, snakeTailDownImgPath, snakeTailLeftImgPath, guideVoodooDollImgPath, lavaBatImgPath, lavaSlimeImgPath
+} from './utilities/constants';
 
-import snakeBodyUp from './assets/Bone_BodyUp.png';
-import snakeBodyRight from './assets/Bone_BodyRight.png';
-import snakeBodyDown from './assets/Bone_BodyDown.png';
-import snakeBodyLeft from './assets/Bone_BodyLeft.png';
-
-import snakeTailUp from './assets/Bone_TailUp.png';
-import snakeTailRight from './assets/Bone_TailRight.png';
-import snakeTailDown from './assets/Bone_TailDown.png';
-import snakeTailLeft from './assets/Bone_TailLeft.png';
-
+/* import classes */
 import classes from './styles/style.module.scss';
-
-const loadImage = (path: string): Promise<HTMLImageElement> => {
-  return new Promise((resolve, reject): void => {
-    let image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-    image.src = path;
-  });
-}
-
-const snakeHeadImageUp = await loadImage(snakeHeadUp);
-const snakeHeadImageRight = await loadImage(snakeHeadRight);
-const snakeHeadImageDown = await loadImage(snakeHeadDown);
-const snakeHeadImageLeft = await loadImage(snakeHeadLeft);
-
-const snakeBodyImageUp = await loadImage(snakeBodyUp);
-const snakeBodyImageRight = await loadImage(snakeBodyRight);
-const snakeBodyImageDown = await loadImage(snakeBodyDown);
-const snakeBodyImageLeft = await loadImage(snakeBodyLeft);
-
-const snakeTailImageUp = await loadImage(snakeTailUp);
-const snakeTailImageRight = await loadImage(snakeTailRight);
-const snakeTailImageDown = await loadImage(snakeTailDown);
-const snakeTailImageLeft = await loadImage(snakeTailLeft);
 
 function GameField() {
   const dispatch = useDispatch();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const applePos = useSelector((state: RootState) => state.applePos.applePos)
+  const applePos = useSelector((state: RootState) => state.applePos.applePos);
   const snakePos = useSelector((state: RootState) => state.snakePos.snakePos);
   const direction = useSelector((state: RootState) => state.snakePos.direction);
   const speed = useSelector((state: RootState) => state.speed.speed);
+
+  /* fetch images from files and change img only when apple was eaten */
+  const fetchAppleImage = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * (2 - 0 + 1) + 0);
+    const appleImages = [guideVoodooDollImgPath, lavaBatImgPath, lavaSlimeImgPath];
+    return appleImages[randomIndex];
+  }, [applePos]);
 
 /* gets new canvas element every time snake-position changes, clear and draws new snake */
   useEffect(() => {
@@ -69,49 +45,53 @@ function GameField() {
     context.setTransform(SCALE, 0, 0, SCALE, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    context.fillStyle = 'red';
-    context.fillRect(applePos.x, applePos.y, 1, 1);
+    /* draw apple img */
+    fetchAppleImage.then(data => context.drawImage(data, applePos.x, applePos.y, 1, 1));    
 
-    context.fillStyle = 'green';
-    snakePos.forEach((item, i) => {
-      if (i === snakePos.length - 1) {
-        switch (item.directionImg) {
-          case 'up':  context.drawImage(snakeTailImageUp, item.x, item.y, 1, 1);
-                      break;
-          case 'right': context.drawImage(snakeTailImageRight, item.x, item.y, 1, 1); 
-                        break;
-          case 'down': context.drawImage(snakeTailImageDown, item.x, item.y, 1, 1); 
-                        break;
-          case 'left': context.drawImage(snakeTailImageLeft, item.x, item.y, 1, 1); 
-                        break;
+    /* draw snake imgs */
+    snakePos.forEach(async (snakePosItem, index) => {
+       /* SNAKE HEAD ------------------------------------------------------------ */
+      if (index === 0) {
+        switch (snakePosItem.directionImg) {
+          case 'up': context.drawImage(await snakeHeadUpImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'right': context.drawImage(await snakeHeadRightImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'down': context.drawImage(await snakeHeadDownImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'left': context.drawImage(await snakeHeadLeftImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
         }
-      } else if (i === 0) {
-        switch (item.directionImg) {
-          case 'up':  context.drawImage(snakeHeadImageUp, item.x, item.y, 1, 1);
-                      break;
-          case 'right': context.drawImage(snakeHeadImageRight, item.x, item.y, 1, 1); 
-                        break;
-          case 'down': context.drawImage(snakeHeadImageDown, item.x, item.y, 1, 1); 
-                        break;
-          case 'left': context.drawImage(snakeHeadImageLeft, item.x, item.y, 1, 1); 
-                        break;
+      }
+      /* SNAKE TAIL ------------------------------------------------------------ */
+      else if (index === snakePos.length - 1) {
+        switch (snakePosItem.directionImg) {
+          case 'up': context.drawImage(await snakeTailUpImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'right': context.drawImage(await snakeTailRightImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'down': context.drawImage(await snakeTailDownImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'left': context.drawImage(await snakeTailLeftImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break; 
         }
-      } else {
-        switch (item.directionImg) {
-          case 'up':  context.drawImage(snakeBodyImageUp, item.x, item.y, 1, 1);
-                      break;
-          case 'right': context.drawImage(snakeBodyImageRight, item.x, item.y, 1, 1); 
-                        break;
-          case 'down': context.drawImage(snakeBodyImageDown, item.x, item.y, 1, 1); 
-                        break;
-          case 'left': context.drawImage(snakeBodyImageLeft, item.x, item.y, 1, 1); 
-                        break;
+      } 
+      /* SNAKE BODY ------------------------------------------------------------ */
+      else {
+        switch (snakePosItem.directionImg) {
+          case 'up': context.drawImage(await snakeBodyUpImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'right': context.drawImage(await snakeBodyRightImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'down': context.drawImage(await snakeBodyDownImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
+          case 'left': context.drawImage(await snakeBodyLeftImgPath, snakePosItem.x, snakePosItem.y, 1, 1); 
+            break;
         }
       }
     });
+  }, [snakePos])
 
-
-  }, [snakePos, applePos])
 
   /* receives the button use pressed on the keyboard */
   const getKeyCode = (event: KeyboardEvent): void => {
@@ -150,12 +130,6 @@ function GameField() {
       directionImg: temp
     };
 
-    /* collide with apple */
-    if (newSnakeHead.x === applePos.x && newSnakeHead.y == applePos.y) {
-      dispatch(appleActions.setApple(snakePos));
-      copySnakePos.unshift(newSnakeHead);
-    }
-    
     /* loop axis X */
     if (newSnakeHead.x >= CANVAS_SIZE.x / SCALE) {
       newSnakeHead.x = 0;
@@ -172,6 +146,12 @@ function GameField() {
 
     copySnakePos.unshift(newSnakeHead);
     copySnakePos.pop();
+
+    /* collide with apple */
+    if (newSnakeHead.x === applePos.x && newSnakeHead.y == applePos.y) {
+      copySnakePos.unshift(newSnakeHead);
+      dispatch(appleActions.setApple(copySnakePos));
+    }
     
     /* update snake's position */
     dispatch(snakePosActions.setSnakePos(copySnakePos));
