@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, DIRECTION_LEFT } from '../utilities/constants';
+
 const initialState = {
   snakePos: [
     {x: 8, y: 7, directionImg: 'up'},
     {x: 8, y: 8, directionImg: 'up'},
     {x: 8, y: 9, directionImg: 'up'},
   ],
-  direction: {x: 1, y: 0}
+  direction: DIRECTION_UP
 }
 
 export const snakeSlice = createSlice({
@@ -16,12 +18,21 @@ export const snakeSlice = createSlice({
     setSnakePos(state, action) {
       state.snakePos = action.payload;
     },
+
     setDirection(state, action) {
-      switch(action.payload) {
-        case 38: state.direction = {x: 0, y: -1}; break; /* up */
-        case 40: state.direction = {x: 0, y: 1}; break; /* down */
-        case 37: state.direction = {x: -1, y: 0}; break; /* left */
-        case 39: state.direction = {x: 1, y: 0}; break; /* right */
+      const strDirection: string = action.payload;
+      
+      if (strDirection === 'ArrowUp' || strDirection === 'KeyW') {
+        state.direction = (state.direction.y !== DIRECTION_DOWN.y) ? DIRECTION_UP : DIRECTION_DOWN;
+      }
+      if (strDirection === 'ArrowDown' || strDirection === 'KeyS') {
+        state.direction = (state.direction.y !== DIRECTION_UP.y) ?  DIRECTION_DOWN : DIRECTION_UP;
+      }
+      if (strDirection === 'ArrowLeft' || strDirection === 'KeyA') {
+        state.direction = (state.direction.x !== DIRECTION_RIGHT.x) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+      }
+      if (strDirection === 'ArrowRight' || strDirection === 'KeyD') {
+        state.direction = (state.direction.x !== DIRECTION_LEFT.x) ? DIRECTION_RIGHT : DIRECTION_LEFT;
       }
     }
   }

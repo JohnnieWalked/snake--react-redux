@@ -1,5 +1,6 @@
-import { KeyboardEvent, useEffect, useMemo, useRef } from 'react';
+import { KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Modal from './Modal';
 import useInterval from './hooks/useInterval';
 
 /* import redux-slices */
@@ -7,6 +8,7 @@ import { RootState } from './store';
 import { snakePosActions } from './store/snakeSlice';
 import { appleActions } from './store/appleSlice';
 import { speedActions } from './store/speedSlice';
+import { scoreActions } from './store/scoreSlice';
 
 /* import img files */
 import { 
@@ -19,6 +21,7 @@ import {
 /* import classes */
 import classes from './styles/style.module.scss';
 
+
 function GameField() {
   const dispatch = useDispatch();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -26,6 +29,9 @@ function GameField() {
   const snakePos = useSelector((state: RootState) => state.snakePos.snakePos);
   const direction = useSelector((state: RootState) => state.snakePos.direction);
   const speed = useSelector((state: RootState) => state.speed.speed);
+  const score = useSelector((state: RootState) => state.score.score);
+
+  const [endGame, setEndGame] = useState(false);
 
   /* fetch images from files and change img only when apple was eaten */
   const fetchAppleImage = useMemo(() => {
@@ -95,10 +101,12 @@ function GameField() {
 
   /* receives the button use pressed on the keyboard */
   const getKeyCode = (event: KeyboardEvent): void => {
-    if (event.keyCode === 32) {
-      speed ? dispatch(speedActions.setSpeed(null)) : dispatch(speedActions.setSpeed(50));
+    const pressedKey = event.code;
+    if (pressedKey === 'Space') {
+      console.log(speed);
+      speed ? dispatch(speedActions.setSpeed(false)) : dispatch(speedActions.setSpeed(true));
     } else {
-      event.keyCode >= 37 && event.keyCode <= 40 && dispatch(snakePosActions.setDirection(event.keyCode));
+      dispatch(snakePosActions.setDirection(pressedKey));
     }
   }
 
@@ -144,12 +152,26 @@ function GameField() {
       newSnakeHead.y = CANVAS_SIZE.y / SCALE;
     }
 
-    copySnakePos.unshift(newSnakeHead);
     copySnakePos.pop();
 
+    /* collide with snake */
+    if (copySnakePos.some(item => item.x === newSnakeHead.x && item.y === newSnakeHead.y)) {
+      setEndGame(!endGame);
+      if (window.localStorage.getItem('highScore') !== undefined 
+          || Number(window.localStorage.getItem('highScore')) < score) {
+        window.localStorage.setItem('highScore', score.toString());
+      }
+      
+      dispatch(speedActions.setSpeed(false));
+    }
+
+    copySnakePos.unshift(newSnakeHead);
+
     /* collide with apple */
-    if (newSnakeHead.x === applePos.x && newSnakeHead.y == applePos.y) {
+    if (newSnakeHead.x === applePos.x && newSnakeHead.y === applePos.y) {
       copySnakePos.unshift(newSnakeHead);
+      dispatch(scoreActions.setScore(10));
+      dispatch(speedActions.increaseSpeed(score));
       dispatch(appleActions.setApple(copySnakePos));
     }
     
@@ -163,6 +185,7 @@ function GameField() {
   return (
     <div onKeyDown={(e: KeyboardEvent) => getKeyCode(e)} className={classes.gameField}>
       <canvas tabIndex={0} ref={canvasRef} width={`${CANVAS_SIZE.x}px`} height={`${CANVAS_SIZE.y}px`} />
+      {endGame && <Modal setEndGame={setEndGame} />}
     </div>
   )
 }

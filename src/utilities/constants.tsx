@@ -1,5 +1,11 @@
 export const CANVAS_SIZE = {x: 600, y: 400};
 export const SCALE = 20;
+export const snakeInitialSpeed = 150;
+
+export const DIRECTION_UP = {x: 0, y: -1};
+export const DIRECTION_DOWN = {x: 0, y: 1};
+export const DIRECTION_LEFT = {x: -1, y: 0};
+export const DIRECTION_RIGHT = {x: 1, y: 0};
 
 import snakeHeadUp from '../assets/Bone_HeadUp.png';
 import snakeHeadRight from '../assets/Bone_HeadRight.png';

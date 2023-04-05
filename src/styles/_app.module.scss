@@ -15,3 +15,26 @@
   }
 }
 
+.instructions {
+  width: 500px;
+  li {
+    position: relative;
+    margin-bottom: 15px;
+    list-style: none;
+    &::before {
+      content: "";
+      position: absolute;
+      display: block;
+      background: url('../assets/Warrior_Emblem.png') center center/cover no-repeat;
+      width: 30px;
+      height: 30px;
+      top: -2px;
+      left: -40px;
+    }
+    button {
+      margin: 0;
+      padding: 5px 10px;
+      font-size: 25px;
+    }
+  }
+}

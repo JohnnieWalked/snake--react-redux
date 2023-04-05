@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import { CANVAS_SIZE, SCALE } from '../utilities/constants';
 
 const initialState = {
@@ -9,25 +10,27 @@ export const appleSlice = createSlice({
   name: 'applePos',
   initialState,
   reducers: {
-    /* when snake eats an apple - generates new XY for apple */
     setApple(state, action) {
-      const currentSnakePos: {x: number, y: number}[] = action.payload;
-      const newApplePosY = Math.floor(Math.random() * (CANVAS_SIZE.y / SCALE));
-      let newApplePosX: number;
+      const currentSnakePos: {x: number}[] = action.payload;
+      let newApplePosY = Math.floor(Math.random() * (CANVAS_SIZE.y / SCALE)),
+          newApplePosX;
+      let appleSpawnInSnake = true;
 
-      function calcAppleX(): number {
-        while (true) {
-          newApplePosX = Math.floor(Math.random() * (CANVAS_SIZE.x / SCALE));
-          if (currentSnakePos.some((item) => item.x === newApplePosX)) {
-            calcAppleX();
+      while (appleSpawnInSnake) {
+        appleSpawnInSnake = false;
+        newApplePosX = Math.floor(Math.random() * (CANVAS_SIZE.x / SCALE));
+        for (let item of currentSnakePos) {
+          if (newApplePosX === item.x) {
+            console.log('food spawned above snake... retry')
+            appleSpawnInSnake = true;
           } else {
-            return newApplePosX;
+            state.applePos.x = newApplePosX;
+            state.applePos.y = newApplePosY;
+            break;
           }
         }
       }
-
-      state.applePos = { x: calcAppleX() , y: newApplePosY};
-    },
+    }
   }
 });
 
